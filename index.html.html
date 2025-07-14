@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Arcelus - Executor Roblox</title>
+<style>
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  body, html {
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0a0a0a, #1f1f1f);
+    color: #eee;
+    overflow: hidden;
+  }
+
+  /* Splash screen */
+  #splash {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    flex-direction: column;
+    user-select: none;
+    opacity: 1;
+    transition: opacity 1s ease;
+  }
+
+  #splash.hide {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #splash h1 {
+    font-size: 4rem;
+    font-weight: 900;
+    color: #fff;
+    background: linear-gradient(90deg, #ff0055, #ff66aa, #ff0055);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: baseGradientMove 6s linear infinite, pulse 3s ease-in-out 1 forwards;
+    position: relative;
+  }
+
+  /* Animacja pulsowania napisu */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; filter: drop-shadow(0 0 10px #ff0055); }
+    50% { opacity: 0.8; filter: drop-shadow(0 0 20px #ff6699); }
+  }
+
+  @keyframes baseGradientMove {
+    0% { background-position: 0% 50% }
+    50% { background-position: 100% 50% }
+    100% { background-position: 0% 50% }
+  }
+
+  /* Po splashu - pokazujemy normalnie stronę */
+  body.loaded {
+    overflow: auto;
+    animation: pageFadeIn 1s ease forwards;
+  }
+  body.loaded #splash {
+    display: none;
+  }
+
+  @keyframes pageFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(30,30,30,0.8);
+    backdrop-filter: blur(6px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    z-index: 100;
+    border-bottom: 1px solid #444;
+    opacity: 0;
+  }
+  body.loaded header {
+    opacity: 1;
+    transition: opacity 1s ease 0.2s;
+  }
+  header .logo {
+    font-weight: 900;
+    font-size: 1.6rem;
+    background: linear-gradient(90deg, #ff0055, #ff9900, #00ddff, #9900ff);
+    background-size: 400% 400%;
+    animation: gradientAnim 6s linear infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  header a.discord-btn {
+    background: #5865f2;
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+  }
+  header a.discord-btn:hover {
+    background: #4752c4;
+  }
+
+  main {
+    margin-top: 80px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    text-align: center;
+    opacity: 0;
+  }
+  body.loaded main {
+    opacity: 1;
+    transition: opacity 1s ease 0.4s;
+  }
+  main h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  main p.subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #ccc;
+  }
+  .methods-container {
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  }
+  .method-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #fff;
+  }
+  .button-download {
+    display: inline-block;
+    padding: 0.9rem 2rem;
+    font-weight: 700;
+    font-size: 1.2rem;
+    border-radius: 14px;
+    background: linear-gradient(270deg, #ff0055, #00aaff, #ff0055);
+    background-size: 600% 600%;
+    animation: neonGradient 6s ease infinite;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    transition: box-shadow 0.3s ease;
+  }
+  .button-download:hover {
+    box-shadow: 0 0 12px #ff0055, 0 0 24px #00aaff;
+  }
+
+  .footer-text {
+    margin-top: 2.5rem;
+    font-size: 1.3rem;
+    color: #ff3b3b;
+    animation: pulseRed 2.5s infinite ease-in-out;
+    opacity: 0;
+  }
+  body.loaded .footer-text {
+    opacity: 1;
+    transition: opacity 1s ease 0.6s;
+  }
+
+  @keyframes gradientAnim {
+    0% { background-position: 0% 50% }
+    50% { background-position: 100% 50% }
+    100% { background-position: 0% 50% }
+  }
+  @keyframes neonGradient {
+    0% { background-position: 0% 50% }
+    50% { background-position: 100% 50% }
+    100% { background-position: 0% 50% }
+  }
+  @keyframes pulseRed {
+    0%, 100% { opacity: 1 }
+    50% { opacity: 0.4 }
+  }
+</style>
+</head>
+<body>
+
+<!-- Splash screen -->
+<div id="splash">
+  <h1 data-text="Arcelus">Arcelus</h1>
+</div>
+
+<!-- Główna zawartość strony -->
+<header>
+  <div class="logo">Arcelus Style</div>
+  <a href="https://discord.gg/bdGpY6EPB5" target="_blank" class="discord-btn">Dołącz na Discorda</a>
+</header>
+
+<main>
+  <h1>Welcome to the website</h1>
+  <p class="subtitle">choose one of the methods:</p>
+
+  <div class="methods-container">
+    <div class="method-title">Arcelus</div>
+    <button class="button-download" onclick="alert('Pobieranie rozpoczęte!')">Download</button>
+  </div>
+
+  <div class="footer-text">
+    Arcelus is in development. Want to stay up to date? Join our Discord community.
+  </div>
+</main>
+
+<script>
+  window.addEventListener('load', () => {
+    const splash = document.getElementById('splash');
+    const splashText = splash.querySelector('h1');
+
+    // Po 2.8s - zaczynamy fade out napisu + pulsacje
+    setTimeout(() => {
+      splashText.style.animation = 'fadeOutText 1.2s forwards';
+    }, 2800);
+
+    // Po 4s ukrywamy splash i pokazujemy stronę
+    setTimeout(() => {
+      splash.classList.add('hide');
+      document.body.classList.add('loaded');
+    }, 4000);
+  });
+</script>
+
+<style>
+  @keyframes fadeOutText {
+    0% {
+      opacity: 1;
+      filter: drop-shadow(0 0 20px #ff6699);
+    }
+    100% {
+      opacity: 0.2;
+      filter: drop-shadow(0 0 5px #ff0033);
+    }
+  }
+</style>
+
+</body>
+</html>
