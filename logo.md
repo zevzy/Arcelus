@@ -1,1 +1,1 @@
-![Uploading Image] (arceluslogs.png…)()
+![Uploading Image] (arceluslogs.png)
